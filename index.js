@@ -12,11 +12,12 @@ app.use('/',express.static('public'));
 	io.on('connection',function(socket){
 		console.log("a user connected");
 		socket.on('message',function(data){
-			console.log("message: "+data);
-			// io.emit('chat message',data) //send data to all client including send of the data
-			socket.broadcast.emit('chat message',data)
+			console.log("message: "+JSON.stringify(data));
+			io.emit('message',data); //send data to all client including send of the data
+			// socket.broadcast.emit('chat message',data) send data to all except sender
 		});
-		socket.on('disconnect',function(){
-			console.log("a user disconnected")
-		})
+		socket.on('disconnect',function(data){
+			console.log("a user disconnected: "+JSON.stringify(data))
+
+		});
 	})
