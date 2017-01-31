@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Chat-Socket.io</title>
+     	<link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+    <ul id="messages"></ul>
+       <form action="">
+         <input id="m" autocomplete="off" /><button>Send</button>
+       </form>
+      <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+      <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+      <script>
+      	var chat = io("192.168.2.7:3000");
+      	var msg = {};
+      		msg.user = myName();
+      	$('#messages').append($('<li>').text("Your name is: "+msg.user));
+      	$('form').submit(function(){
+      		msg.info = $('#m').val();
+      		chat.emit('message',msg);
+      		$('#m').val();
+      		return false;
+      	})
+      	chat.on('message',function(message){
+      		var str = message.user == msg.user ? '':message.user+": ";
+      			str += message.info;
+      		$('#messages').append($('<li>').text(str))
+      	})
+
+      	function myName()
+      	{
+      	    var text = "";
+      	    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+      	    for( var i=0; i < 5; i++ )
+      	        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      	    return text;
+      	}
+      </script>
+    </body>
+</html>
