@@ -13,7 +13,6 @@ app.use('/',express.static('public'));
 	
 	io.on('connection',function(socket){
 		console.log("a user connected");
-		console.log(socket.rooms)
 		socket.on('message',function(data){
 			console.log("message: "+JSON.stringify(data));
 			io.emit('message',data); //send data to all client including send of the data
