@@ -1,30 +1,47 @@
-var socket = io();
-var msg = {};
-      msg.user = myName();
-$('#messages').append($('<li>').text("Your name is: "+msg.user));
+$(function(){
+  $('#btn').click(function(){
+    if($('.username').val() == ''){
+      alert("kindly provide your username");
+    }else{
+      $('.userForm').hide();
+      $('.chatRoom').show();
+      socketIO($('.username').val());
+    }
+  })
+});
 
-$('form').submit(function(){
-      if($('#m').val() == '')
-        return false;
-      msg.info = $('#m').val();
-      socket.emit('message',msg);
-      $('#m').val('');
-      return false;
-})
+function socketIO(username){
+    var socket = io();
+    var msg = {};
+          msg.user = username;
+    $('#messages').append($('<li>').text("Your name is: "+msg.user));
 
-socket.on('message',function(message){
-      var str = message.user == msg.user ? '':message.user+": ";
-            str += message.info;
-      $('#messages').append($('<li>').text(str));
-})
+    $('form').submit(function(){
+          if($('#m').val() == '')
+            return false;
+          msg.info = $('#m').val();
+          socket.emit('message',msg);
+          $('#m').val('');
+          return false;
+    })
 
-function myName()
-{
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    socket.on('message',function(message){
+          var str = message.user == msg.user ? '':message.user+": ";
+                str += message.info;
+          if(message.user == msg.user)
+              $('#messages').append($('<li class="mine">').text(str));
+          else
+              $('#messages').append($('<li>').text(str));
+    })
 
-    for( var i=0; i < 5; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    function myName()
+    {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-    return text;
+        for( var i=0; i < 5; i++ )
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    }
 }

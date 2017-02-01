@@ -7,6 +7,7 @@ server.listen(3000,function(){
 	console.log("Server Started Listening on 3000")
 });
 
+
 app.use('/',express.static('public'));
 
 	io.on('connection',function(socket){

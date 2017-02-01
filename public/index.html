@@ -6,10 +6,21 @@
      	<link rel="stylesheet" type="text/css" href="style.css">
     </head>
     <body>
+    <div class="userForm">
+        <input type="text" class="username" placeholder="Type your Name here">
+        <input type="button" id="btn" value="Enter in Chat Room">
+    </div>
+
+    <div class="chatRoom">
+    <div id="menu">
+      <h1>This is menu</h1>
+    </div>
+    
     <ul id="messages"></ul>
        <form action="">
          <input id="m" autocomplete="off" /><button>Send</button>
        </form>
+    </div>
       <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
       <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
       <script type="text/javascript" src="chat.js"></script>
