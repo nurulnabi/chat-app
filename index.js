@@ -10,6 +10,8 @@ server.listen(3000,function(){
 var users = [];
 
 app.use('/',express.static('public'));
+
+	
 	
 	io.on('connection',function(socket){
 		console.log("a user connected");

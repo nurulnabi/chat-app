@@ -4,7 +4,7 @@ $(function(){
       alert("kindly provide your username");
     }else{
       $('.userForm').hide();
-      $('.chatRoom').show();
+      $('.container').show();
       socketIO($('.username').val());
     }
   })
@@ -14,7 +14,7 @@ function socketIO(username){
     var socket = io('localhost:3000');
     var msg = {};
           msg.user = username;
-    $('#messages').append($('<li>').text("Your name is: "+msg.user));
+    $('.saluation').html('Hello '+username+'!');
 
     $('form').submit(function(){
           if($('#m').val() == '')

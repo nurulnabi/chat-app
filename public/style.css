@@ -1,14 +1,14 @@
 /*
 * @Author: MD NOORUL NABI ANSARI
 * @Date:   2017-01-31 17:17:04
-* @Last Modified by:   noor
-* @Last Modified time: 2017-02-01 19:15:01
+* @Last Modified by:   nurulnabi
+* @Last Modified time: 2017-02-01 23:03:40
 */
  * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font: 13px Helvetica, Arial; }
-form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-.txt { border: 0; padding: 10px; width: 79%; margin-right: .5%; }
-.btn { width: 10%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+.form { background: #000; padding: 3px; position:fixed; bottom: 0; width: 70%; }
+.txt { border: 0; padding: 10px; width: 100%;  }
+.btn { width: 49%; background: rgb(130, 224, 255); border: none; padding: 10px; }
 .btn:hover{
 	cursor: pointer;
 }
@@ -19,10 +19,24 @@ form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; 
 	text-align: right;
 }
 .chatRoom{
-	display: none;
+	width: 70%;
+	height: 100%;
 }
 #menu{
 	width: 100%;
 	min-height: 50px;
 	background: #cfd8dc;
+}
+
+.container{
+	display: none;
+	width: 100%;
+}
+.rooms,.usersOnline{
+	width: 15%;
+	background: #E8E8E8 ;
+	height: 700px;
+}
+.float{
+	float: left;
 }
