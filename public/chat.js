@@ -23,18 +23,27 @@ function socketIO(username){
       chatInfra.emit('register user',username); //register yourself with the server
     });
     chatInfra.on('new user',function(newUser){
-      $('#messages').append('<li class="centered"><b>'+newUser+'</b> joined you');
+      $('#messages').append('<li class="centered"><b>'+newUser+'</b> joined');
+    });
+    chatInfra.on('user disconnected',function(userLoggedOff){
+      $('#messages').append('<li class="centered"><b>'+userLoggedOff+'</b> left');
+    })
+    chatInfra.on('user closed',function(userLoggedOff){
+      $('#messages').append('<li class="centered"><b>'+userLoggedOff+'</b> left');
     })
 
     //communication channel
-    chatComm.on('message',function(data){
-      if(data.username == username){
-        $('#messages').append('<li class="mine">'+data.message);
-      }else{
-        $('#messages').append('<li><b>'+data.username+'</b>: '+data.message);
-      }
+    chatComm.on('connect',function(){
+      chatComm.on('message',function(data){
+        console.log(data);
+        if(data.username == username){
+          $('#messages').append('<li class="mine">'+data.message);
+        }else{
+          $('#messages').append('<li><b>'+data.username+'</b>: '+data.message);
+        }
+      })
     })
-
+    
     $('form').submit(function(){
           if($('#m').val() == '')
             return false;
