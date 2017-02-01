@@ -11,18 +11,42 @@ var users = [];
 
 app.use('/',express.static('public'));
 
-	
-	
-	io.on('connection',function(socket){
-		console.log("a user connected");
-		socket.on('message',function(data){
-			console.log("message: "+JSON.stringify(data));
-			io.emit('message',data); //send data to all client including send of the data
-			// socket.broadcast.emit('chat message',data) send data to all except sender
+
+	//setting up channels to recieve a single type of messages on a dedicated channel
+	//for recieving user information and broadcasting that
+	io.of('/chat_infra')
+		.on('connection',function(socket){
+			socket.on('register user',function(username){
+				var user = {};
+				user.id = socket.id;
+				user.name = username;
+				users.push(user);
+				socket.username = username;
+				socket.broadcast.emit('new user',username); //notify to all except this
+			});
+			socket.on('disconnect',function(){
+				socket.broadcast.emit('user disconnected',socket.username)
+			});
+			socket.on('close',function(){
+				socket.broadcast.emit('user disconnected',socket.username)
+			});
 		});
-		socket.on('disconnect',function(data){
-			console.log("a user disconnected: "+JSON.stringify(data))
-			io.clients(function(err,clients){
-			})
-		});
-	})
+
+	//for communication with the users
+	io.of('/chat_comm')
+		.on('connection',function(socket){
+				socket.on('message',function(data){
+					console.log(JSON.stringify(data)+"->"+socket.username);
+					data.username = socket.username;
+					socket.emit('message',data);
+					console.log(JSON.stringify(data));
+				});
+
+				socket.on('disconnect',function(data){
+					socket.broadcast.emit('user disconnected',socket.username)
+				});
+
+				socket.on('close',function(data){
+					socket.broadcast.emit('user disconnected',socket.username)
+				});
+		})

@@ -4,7 +4,7 @@
 		.on('connection',function(socket){
 			socket.on('register user',function(data){
 				socket.set('username',data.username,function(){
-					socket.send(JSON.stringify(data));	//send back to the same user
+					// socket.send(JSON.stringify(data));	//send back to the same user
 					socket.broadcast.emit('new user',data);	//notify to all except this user
 				})
 			});

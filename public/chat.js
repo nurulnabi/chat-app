@@ -11,37 +11,37 @@ $(function(){
 });
 
 function socketIO(username){
-    var socket = io('localhost:3000');
     var msg = {};
-          msg.user = username;
     $('.saluation').html('Hello '+username+'!');
+
+    
+
+    var chatInfra = io.connect('/chat_infra'),
+        chatComm  = io.connect('/chat_comm');
+
+    chatInfra.on('connect',function(){
+      chatInfra.emit('register user',username); //register yourself with the server
+    });
+    chatInfra.on('new user',function(newUser){
+      $('#messages').append('<li class="centered"><b>'+newUser+'</b> joined you');
+    })
+
+    //communication channel
+    chatComm.on('message',function(data){
+      if(data.username == username){
+        $('#messages').append('<li class="mine">'+data.message);
+      }else{
+        $('#messages').append('<li><b>'+data.username+'</b>: '+data.message);
+      }
+    })
 
     $('form').submit(function(){
           if($('#m').val() == '')
             return false;
-          msg.info = $('#m').val();
-          socket.emit('message',msg);
+          msg.message = $('#m').val();
+          chatComm.emit('message',msg);
           $('#m').val('');
           return false;
     })
+}       
 
-    socket.on('message',function(message){
-          var str = message.user == msg.user ? '':message.user+": ";
-                str += message.info;
-          if(message.user == msg.user)
-              $('#messages').append($('<li class="mine">').text(str));
-          else
-              $('#messages').append($('<li>').text(str));
-    })
-
-    function myName()
-    {
-        var text = "";
-        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-        for( var i=0; i < 5; i++ )
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-        return text;
-    }
-}
