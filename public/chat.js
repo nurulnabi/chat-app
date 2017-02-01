@@ -11,7 +11,7 @@ $(function(){
 });
 
 function socketIO(username){
-    var socket = io();
+    var socket = io('localhost:3000');
     var msg = {};
           msg.user = username;
     $('#messages').append($('<li>').text("Your name is: "+msg.user));

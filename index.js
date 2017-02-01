@@ -7,11 +7,13 @@ server.listen(3000,function(){
 	console.log("Server Started Listening on 3000")
 });
 
+var users = [];
 
 app.use('/',express.static('public'));
-
+	
 	io.on('connection',function(socket){
 		console.log("a user connected");
+		console.log(socket.rooms)
 		socket.on('message',function(data){
 			console.log("message: "+JSON.stringify(data));
 			io.emit('message',data); //send data to all client including send of the data
@@ -19,6 +21,7 @@ app.use('/',express.static('public'));
 		});
 		socket.on('disconnect',function(data){
 			console.log("a user disconnected: "+JSON.stringify(data))
-
+			io.clients(function(err,clients){
+			})
 		});
 	})
