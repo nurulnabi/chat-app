@@ -21,6 +21,7 @@ app.use('/',express.static('public'));
 				users[id] = username; //socket.id contains the channel name also
 				socket.username = username;
 				socket.userId = id;
+				socket.currentRoom = id;
 				socket.broadcast.emit('new user',{id:id,username:username}); //notify to all except this
 				console.log('Users Joined: '+JSON.stringify(users))
 				chatInfra.emit('users online',users);

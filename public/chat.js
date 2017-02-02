@@ -13,6 +13,7 @@ $(function(){
 function socketIO(username){
     var msg = {};
     var usersOnline = {};
+    var allMessages = {};
     $('.saluation').html('Hello '+username+'!');
 
     
