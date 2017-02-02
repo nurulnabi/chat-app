@@ -17,18 +17,23 @@ app.use('/',express.static('public'));
 	var chatInfra = io.of('/chat_infra');
 		chatInfra.on('connection',function(socket){
 			socket.on('register user',function(username){
-				var id = 
-				users[socket.id.slice(socket.id.indexOf('#'))] = username; //socket.id contains the channel name also
+				var id = socket.id.slice(socket.id.indexOf('#')+1);
+				users[id] = username; //socket.id contains the channel name also
 				socket.username = username;
-				socket.broadcast.emit('new user',username); //notify to all except this
+				socket.userId = id;
+				socket.broadcast.emit('new user',{id:id,username:username}); //notify to all except this
+				console.log('Users Joined: '+JSON.stringify(users))
+				chatInfra.emit('users online',users);
 			});
 			socket.on('disconnect',function(){
-				console.log("userDiconnected: ",socket.username);
-				socket.broadcast.emit('user disconnected',socket.username)
+				console.log("userDiconnected: ",{id:socket.userId,username:socket.username});
+				delete users[socket.id];
+				socket.broadcast.emit('user disconnected',{id:socket.userId,username:socket.username})
 			});
 			socket.on('close',function(){
-				console.log("userClosed: ",socket.username);
-				socket.broadcast.emit('user disconnected',socket.username)
+				delete users[socket.id];
+				console.log("userClosed: ",{id:socket.userId,username:socket.username});
+				socket.broadcast.emit('user disconnected',{id:socket.userId,username:socket.username})
 			});
 		});
 
@@ -36,18 +41,8 @@ app.use('/',express.static('public'));
 	var chatComm = io.of('/chat_comm');
 		chatComm.on('connection',function(socket){
 			socket.on('message',function(data){
-				data.username = users[socket.id.slice(socket.id.indexOf('#'))];
+				data.username = users[socket.id.slice(socket.id.indexOf('#')+1)];
 				chatComm.emit('message',data);	//send to all 
 				console.log(data);
-			})
-			
-			// socket.on('disconnect',function(data){
-			// 	console.log("userDiconnected: ",socket.id);
-			// 	chatComm.broadcast.emit('user disconnected',socket.username)
-			// });
-
-			// socket.on('close',function(data){
-			// 	console.log("userClosed: ",socket.id);
-			// 	chatComm.broadcast.emit('user disconnected',socket.username)
-			// });
-		})
+			});
+		});
