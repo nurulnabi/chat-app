@@ -21,6 +21,7 @@ app.use('/',express.static('public'));
 				users[socket.id.slice(socket.id.indexOf('#'))] = username; //socket.id contains the channel name also
 				socket.username = username;
 				socket.broadcast.emit('new user',username); //notify to all except this
+				chatInfra.emit('online users',users)
 			});
 			socket.on('disconnect',function(){
 				console.log("userDiconnected: ",socket.username);
