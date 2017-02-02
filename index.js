@@ -27,11 +27,11 @@ app.use('/',express.static('public'));
 			});
 			socket.on('disconnect',function(){
 				console.log("userDiconnected: ",{id:socket.userId,username:socket.username});
-				delete users[socket.id];
+				delete users[socket.userId];
 				socket.broadcast.emit('user disconnected',{id:socket.userId,username:socket.username})
 			});
 			socket.on('close',function(){
-				delete users[socket.id];
+				delete users[socket.userId];
 				console.log("userClosed: ",{id:socket.userId,username:socket.username});
 				socket.broadcast.emit('user disconnected',{id:socket.userId,username:socket.username})
 			});
