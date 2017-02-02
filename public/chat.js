@@ -1,28 +1,32 @@
-$(function(){
+$(function checkInput(){
   $('#btn').click(function(){
-    if($('.username').val() == ''){
-      alert("kindly provide your username");
+    if($('.username').val() == ''|| $('.roomName').val()=='' ){
+      alert("kindly provide your userName/roomName");
     }else{
       $('.userForm').hide();
       $('.container').show();
-      socketIO($('.username').val());
+      socketIO($('.username').val(),$('.roomName').val());
     }
   })
 });
 
-function socketIO(username){
+var chatInfra,chatComm;
+function socketIO(username,roomname){
+    var username,roomname;
     var msg = {};
     var usersOnline = {};
+    var roomsOpen = {};
     var allMessages = {};
-    $('.saluation').html('Hello '+username+'!');
+    $('.saluation').html('Hello '+username+'!'+" Room: "+roomname);
 
     
 
-    var chatInfra = io.connect('/chat_infra'),
-        chatComm  = io.connect('/chat_comm');
+    chatInfra = io.connect('/chat_infra');
+    chatComm  = io.connect('/chat_comm');
 
     chatInfra.on('connect',function(){
       chatInfra.emit('register user',username); //register yourself with the server
+      chatInfra.emit('join room',roomname);
     });
     chatInfra.on('new user',function(newUser){
       $('#messages').append('<li class="centered"><b>'+newUser.username+'</b> joined');
@@ -43,10 +47,17 @@ function socketIO(username){
         for(var key in newUsersObject){
           if(!usersOnline[key]){
             usersOnline[key] = newUsersObject[key];
-            $('.userPopulation').append('<li class="centered" id="'+key+'">'+newUsersObject[key]);
+            $('.userPopulation').append('<li class="centered chatWithUser" id="'+key+'">'+newUsersObject[key]);
           }
         }
     });
+    chatInfra.on('room list',function(roomList){
+      $('.room').hide();
+      for(var room in roomList){
+        $('.roomPopulation').append('<li class="room chatInRoom" id="'
+          +room+'" onclick="chatInfra.emit(\'join room\',this.id)">'+room+': '+roomList[room]+' users');
+      }
+    })
 
     //communication channel
     chatComm.on('connect',function(){
@@ -59,7 +70,7 @@ function socketIO(username){
         }
       })
     })
-    
+
     $('form').submit(function(){
           if($('#m').val() == '')
             return false;
@@ -68,5 +79,5 @@ function socketIO(username){
           $('#m').val('');
           return false;
     })
-}       
+}        
 

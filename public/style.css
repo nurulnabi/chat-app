@@ -1,8 +1,8 @@
 /*
 * @Author: MD NOORUL NABI ANSARI
 * @Date:   2017-01-31 17:17:04
-* @Last Modified by:   nurulnabi
-* @Last Modified time: 2017-02-02 01:44:51
+* @Last Modified by:   noor
+* @Last Modified time: 2017-02-02 17:21:51
 */
  * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font: 13px Helvetica, Arial; }
@@ -42,4 +42,7 @@ body { font: 13px Helvetica, Arial; }
 }
 .centered{
 	text-align: center;
+}
+.chatInRoom,.chatWithUser{
+	cursor: pointer;
 }

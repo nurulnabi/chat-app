@@ -16,16 +16,41 @@ app.use('/',express.static('public'));
 	//for recieving user information and broadcasting that
 	var chatInfra = io.of('/chat_infra');
 		chatInfra.on('connection',function(socket){
+			// socket.join('default');
+			var id = socket.id.slice(socket.id.indexOf('#')+1);	//socket.id contains channel name too
+			var commSocket;//get the corresponding chatComm socket for this socket
 			socket.on('register user',function(username){
-				var id = socket.id.slice(socket.id.indexOf('#')+1);
-				users[id] = username; //socket.id contains the channel name also
+				commSocket = chatComm.sockets['/chat_comm#'+id];
+				users[id] = username;
 				socket.username = username;
 				socket.userId = id;
-				socket.currentRoom = id;
-				socket.broadcast.emit('new user',{id:id,username:username}); //notify to all except this
+				commSocket.username = username;
+				commSocket.userId = id;
+
+				// socket.broadcast.emit('new user',{id:id,username:username}); //notify to all except this
 				console.log('Users Joined: '+JSON.stringify(users))
 				chatInfra.emit('users online',users);
+
 			});
+
+			socket.on('join room',function(room){
+				socket.currentRoom = room;
+				commSocket.currentRoom = room;
+				socket.join(room,function(){		//join on this channel
+					socket.in(socket.currentRoom).emit('new user',{id:socket.userId,username:socket.username}); //notify all the sockets in this room except this one
+					var roomList = {};
+					for(var room in chatInfra.adapter.rooms){
+						if(room.indexOf('/chat_infra') == -1){
+							roomList[room] = chatInfra.adapter.rooms[room].length;		//room/#sockets_connected pairs
+						}
+						console.log(room,roomList[room])
+					}
+					chatInfra.emit('room list',roomList)
+				});	
+				commSocket.join(room);	//join on corresponding channel too
+				
+			});
+
 			socket.on('disconnect',function(){
 				console.log("userDiconnected: ",{id:socket.userId,username:socket.username});
 				delete users[socket.userId];
@@ -41,9 +66,12 @@ app.use('/',express.static('public'));
 	//for communication with the users
 	var chatComm = io.of('/chat_comm');
 		chatComm.on('connection',function(socket){
+			// console.log(socket)
 			socket.on('message',function(data){
-				data.username = users[socket.id.slice(socket.id.indexOf('#')+1)];
-				chatComm.emit('message',data);	//send to all 
+				data.username = users[socket.userId];
+				data.currentRoom = socket.currentRoom;
+				socket.send(data);
+				socket.in(socket.currentRoom).emit('message',data);	//send to all but it is not sending to itself
 				console.log(data);
 			});
 		});
